@@ -88,8 +88,7 @@ public void deveVerificarValoresCombo() {
 	for(WebElement option: options) {
 		if(option.getText().equals("Mestrado")) {
 			encontrou = true;
-			break;
-		}
+			break;		}
 	}
 	Assert.assertTrue(encontrou);
 }
