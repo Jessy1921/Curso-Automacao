@@ -137,7 +137,6 @@ public void deveInteragirComBotoes () {
 }
 
 @Test 
-@Ignore
 public void deveInteragirComLinks() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
 	WebDriver driver = new FirefoxDriver();
