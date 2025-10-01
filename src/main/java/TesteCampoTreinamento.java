@@ -1,170 +1,120 @@
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 
 public class TesteCampoTreinamento {
+	
+	private WebDriver driver;
+	private DSL dsl;
+	
+	
+	@Before
+	public void inicializa(){
+		driver = new FirefoxDriver();
+		driver.manage().window().setSize(new Dimension(1200, 765));
+		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+		dsl = new DSL(driver);
+	}
+	
+	@After
+	public void finaliza(){
+		driver.quit();
+	}
+	
 	
 @Test
 public void testeTextField() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-    driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-    driver.findElement(By.id("elementosForm:nome")).sendKeys("Teste de escrita");
-    Assert.assertEquals("Teste de escrita", driver.findElement(By.id("elementosForm:nome")).getAttribute("value"));
-    
-    driver.quit();
+	dsl.escrever("elementosForm:nome", "Teste de escrita");
+	Assert.assertEquals("Teste de escrita", dsl.obterValorCampo("elementosForm:nome"));
 }
 
 @Test
 public void deveInteragirComTextArea() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-	driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-	driver.findElement(By.id("elementosForm:sugestoes")).sendKeys("teste\n\naasldjdlks\nUltima linha");
-	Assert.assertEquals("teste\n\naasldjdlks\nUltima linha", driver.findElement(By.id("elementosForm:sugestoes")).getAttribute("value"));
-	
-	driver.quit();
+	dsl.escrever("elementosForm:sugestoes", "teste\n\naasldjdlks\nUltima linha");
+	Assert.assertEquals("teste\n\naasldjdlks\nUltima linha", dsl.obterValorCampo("elementosForm:sugestoes"));
 }
 
 @Test
 public void deveInteragirComRadioButton() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-	driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-	driver.findElement(By.id("elementosForm:sexo:0")).click();
-	Assert.assertTrue(driver.findElement(By.id("elementosForm:sexo:0")).isSelected());
-	driver.quit();
+	dsl.clicarRadio("elementosForm:sexo:0");
+	Assert.assertTrue(dsl.isRadioMarcado("elementosForm:sexo:0"));
 }
 
 @Test
 public void deveInteragirComCheckbox() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-	driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-	driver.findElement(By.id("elementosForm:comidaFavorita:2")).click();
-	Assert.assertTrue(driver.findElement(By.id("elementosForm:comidaFavorita:2")).isSelected());
-	driver.quit();
+	dsl.clicarCheck("elementosForm:comidaFavorita:2");
+	Assert.assertTrue(dsl.isCheckMarcado("elementosForm:comidaFavorita:2"));
   }
 
 @Test
 public void deveInteragirComCombo() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-	driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-	WebElement element = driver.findElement(By.id("elementosForm:escolaridade"));
-	Select combo = new Select(element);
-	//combo.selectByIndex(3);
-	//combo.selectByValue("superior");
-	combo.selectByVisibleText("2o grau completo");
-	
-	Assert.assertEquals("2o grau completo", combo.getFirstSelectedOption().getText());
-	driver.quit();
+	dsl.selecionarCombo("elementosForm:escolaridade", "2o grau completo");
+	Assert.assertEquals("2o grau completo", dsl.obterValorCombo("elementosForm:escolaridade"));
 	}
 
 @Test
 public void deveVerificarValoresCombo() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-	driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-	WebElement element = driver.findElement(By.id("elementosForm:escolaridade"));
-	Select combo = new Select(element);
-	List<WebElement> options = combo.getOptions();
-	Assert.assertEquals(8, options.size());
-	
-	boolean encontrou = false;
-	for(WebElement option: options) {
-		if(option.getText().equals("Mestrado")) {
-			encontrou = true;
-			break;		}
-	}
-	Assert.assertTrue(encontrou);
+	Assert.assertEquals(8, dsl.obterQuantidadeOpcoesCombo("elementosForm:escolaridade"));
+	Assert.assertTrue(dsl.verificarOpcaoCombo("elementosForm:escolaridade", "Mestrado"));
 }
 
 
 @Test
 public void deveVerificarValoresComboMultiplo() {
     System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-    WebDriver driver = new FirefoxDriver();
-    driver.manage().window().setSize(new Dimension(1200, 765));
-    driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-    
-    WebElement element = driver.findElement(By.id("elementosForm:esportes"));
-    Select combo = new Select(element);
+	dsl.selecionarCombo("elementosForm:esportes", "Natacao");
+	dsl.selecionarCombo("elementosForm:esportes", "Corrida");
+	dsl.selecionarCombo("elementosForm:esportes", "O que eh esporte?");
 
-   
-    combo.selectByVisibleText("Natacao");
-    combo.selectByVisibleText("Corrida");
-    combo.selectByVisibleText("O que eh esporte?");
-    
-    
-    List<WebElement> allSelectedOptions = combo.getAllSelectedOptions();
-    Assert.assertEquals(3, allSelectedOptions.size());
-   
-    combo.deselectByVisibleText("Corrida");
-    allSelectedOptions = combo.getAllSelectedOptions();
-    Assert.assertEquals(2, allSelectedOptions.size());
-
-    driver.quit();
+	List<String> opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
+	Assert.assertEquals(3, opcoesMarcadas.size());
+	
+	dsl.deselecionarCombo("elementosForm:esportes", "Corrida");
+	opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
+	Assert.assertEquals(2, opcoesMarcadas.size());
+	opcoesMarcadas.containsAll(Arrays.asList("Natacao", "O que eh esporte?"));
 }
-
 
 @Test
 public void deveInteragirComBotoes () {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-	driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-	WebElement botao = driver.findElement(By.id("buttonSimple"));
-	botao.click();
-	Assert.assertEquals("Obrigado!", botao.getAttribute("value"));
-	driver.quit();
+	dsl.clicarBotao("buttonSimple");
+	Assert.assertEquals("Obrigado!", dsl.obterValueElemento("buttonSimple"));
 	
 }
 
 @Test 
 public void deveInteragirComLinks() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-	driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+	dsl.clicarLink("Voltar");
 	
-	driver.findElement(By.linkText("Voltar")).click();
-	
-	Assert.assertEquals("Voltou!", driver.findElement(By.id("resultado")).getText());
-	driver.quit();
-	
+	Assert.assertEquals("Voltou!", dsl.obterTexto("resultado"));
 }
 
 @Test
 public void deveBuscarTextosNaPagina() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-	WebDriver driver = new FirefoxDriver();
-	driver.manage().window().setSize(new Dimension(1200, 765));
-	driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-	
-	//Assert.assertTrue(driver.findElement(By.tagName("body")).getText().contains("Campo de Treinamento"));
-	Assert.assertEquals("Campo de Treinamento", driver.findElement(By.tagName("h3")).getText());
-	
-	Assert.assertEquals("Cuidado onde clica, muitas armadilhas...", driver.findElement(By.className("facilAchar")).getText());
+//	Assert.assertTrue(driver.findElement(By.tagName("body"))
+//	.getText().contains("Campo de Treinamento"));
+Assert.assertEquals("Campo de Treinamento", dsl.obterTexto(By.tagName("h3")));
 
-	driver.quit();
-	}
+Assert.assertEquals("Cuidado onde clica, muitas armadilhas...", 
+	dsl.obterTexto(By.className("facilAchar")));
+ }
 }
-
-
 
