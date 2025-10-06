@@ -184,10 +184,14 @@ public class DSL {
 		int idColuna = obterIndiceColuna(colunaBusca, tabela);
 		
 		//encontrar a linha do registro
-		obterIndiceLinha(valor, tabela, idColuna);
+		int idLinha = obterIndiceLinha(valor, tabela, idColuna);
+		
 		//procurar coluna do botao
+		int idColunaBotao = obterIndiceColuna(colunaBotao,tabela);
 		
 		//clicar no botao da celula encontrada
+		WebElement celula = tabela.findElement(By.xpath(".//tr["+idLinha+"]/td["+idColunaBotao+"]"));
+		celula.findElement(By.xpath("./input")).click();
 		
 		//
 	}
