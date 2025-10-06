@@ -1,68 +1,74 @@
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class TesteFramesEJanelas {
-	
-	@Test 
-	public void deveInteragirComFrames() {
-		System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-		WebDriver driver = new FirefoxDriver();
-		driver.manage().window().setSize(new Dimension(1200, 765));
-		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-		
-		driver.switchTo().frame("frame1");
-		driver.findElement(By.id("frameButton")).click();
-		Alert alert = driver.switchTo().alert();
-		String msg = alert.getText();
-		Assert.assertEquals("Frame OK!" , msg);
-		alert.accept();
-		
-		driver.switchTo().defaultContent();
-		driver.findElement(By.id("elementosForm:nome")).sendKeys(msg);
 
-	}
-	
-	@Test
-	public void deveInteragirComJanelas(){
-		System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-		WebDriver driver = new FirefoxDriver();
-		driver.manage().window().setSize(new Dimension(1200, 765));
-		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-		
-		  String mainWindow = driver.getWindowHandle(); //guarda a janela principal 
-		
-		driver.findElement(By.id("buttonPopUpEasy")).click();
-		
-		driver.switchTo().window("Popup");
-		driver.findElement(By.tagName("textarea")).sendKeys("Deu certo?");
-		driver.close();
-		
-		driver.switchTo().window(mainWindow); //volta para a janela principal
-		driver.findElement(By.tagName("textarea")).sendKeys("e agora?");
-	
-	}
-	
+    private WebDriver driver;
+    private DSL dsl;
 
-	@Test
-	public void deveInteragirComJanelasSemTitulo(){
-		System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
-		WebDriver driver = new FirefoxDriver();
-		driver.manage().window().setSize(new Dimension(1200, 765));
-		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-		
-		driver.findElement(By.id("buttonPopUpHard")).click();
-		System.out.println(driver.getWindowHandle());
-		System.out.println(driver.getWindowHandles());
-		driver.switchTo().window((String) driver.getWindowHandles().toArray()[1]);
-		driver.findElement(By.tagName("textarea")).sendKeys("Deu certo?");
-		driver.switchTo().window((String) driver.getWindowHandles().toArray()[0]);
-		driver.findElement(By.tagName("textarea")).sendKeys("E agora?");
-		
-		driver.quit();
-	}
+    @Before
+    public void inicializa() {
+        System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
+        driver = new FirefoxDriver();
+        driver.manage().window().setSize(new Dimension(1200, 765));
+        driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+        dsl = new DSL(driver);
+    }
+
+    @After
+    public void finaliza() {
+        driver.quit();
+    }
+
+    @Test 
+    public void deveInteragirComFrames() {
+        dsl.entrarFrame("frame1");
+        dsl.clicarBotao("frameButton");
+        String msg = dsl.alertaObterTextoEAceita();
+        Assert.assertEquals("Frame OK!", msg);
+
+        dsl.sairFrame();
+        dsl.escrever("elementosForm:nome", msg);
+    }
+
+    @Test
+    public void deveInteragirComFrameEscondido() {
+    	 WebElement frame = driver.findElement(By.id("frame2"));
+    	 dsl.executarJS("window.scrollBy(0, argumensts[0])", frame.getLocation().y);
+        dsl.entrarFrame("frame2");
+        dsl.clicarBotao("frameButton");
+        String msg = dsl.alertaObterTextoEAceita();
+        Assert.assertEquals("Frame OK!", msg);
+       
+    }
+
+    @Test
+    public void deveInteragirComJanelas() {
+        dsl.clicarBotao("buttonPopUpEasy");
+        dsl.trocarJanela("Popup");
+        dsl.escrever(By.tagName("textarea"), "Deu certo?");
+        driver.close();
+
+        dsl.trocarJanela(""); // volta pra janela principal
+        dsl.escrever(By.tagName("textarea"), "E agora?");
+    }
+
+    @Test
+    public void deveInteragirComJanelasSemTitulo() {
+        dsl.clicarBotao("buttonPopUpHard");
+        System.out.println(driver.getWindowHandle());
+        System.out.println(driver.getWindowHandles());
+
+        dsl.trocarJanela((String) driver.getWindowHandles().toArray()[1]);
+        dsl.escrever(By.tagName("textarea"), "Deu certo?");
+        dsl.trocarJanela((String) driver.getWindowHandles().toArray()[0]);
+        dsl.escrever(By.tagName("textarea"), "E agora?");
+    }
 }

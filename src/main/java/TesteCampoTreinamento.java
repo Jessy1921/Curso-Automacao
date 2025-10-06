@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -19,6 +20,9 @@ public class TesteCampoTreinamento {
 	
 	@Before
 	public void inicializa(){
+		System.setProperty("webdriver.gecko.driver", 
+		        "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
+		
 		driver = new FirefoxDriver();
 		driver.manage().window().setSize(new Dimension(1200, 765));
 		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
@@ -27,7 +31,7 @@ public class TesteCampoTreinamento {
 	
 	@After
 	public void finaliza(){
-		driver.quit();
+		//driver.quit();
 	}
 	
 	
@@ -36,6 +40,16 @@ public void testeTextField() {
 	System.setProperty("webdriver.gecko.driver", "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
 	dsl.escrever("elementosForm:nome", "Teste de escrita");
 	Assert.assertEquals("Teste de escrita", dsl.obterValorCampo("elementosForm:nome"));
+}
+
+@Test
+public void testTextFieldDuplo(){
+	 System.setProperty("webdriver.gecko.driver", 
+		        "C:/JAVA_HOME/workspaceEclipseweb/CursoSelenium/geckodriver.exe");
+	dsl.escrever("elementosForm:nome", "Wagner");
+	Assert.assertEquals("Wagner", dsl.obterValorCampo("elementosForm:nome"));
+	dsl.escrever("elementosForm:nome", "Aquino");
+	Assert.assertEquals("Aquino", dsl.obterValorCampo("elementosForm:nome"));
 }
 
 @Test
@@ -87,7 +101,7 @@ public void deveVerificarValoresComboMultiplo() {
 	dsl.deselecionarCombo("elementosForm:esportes", "Corrida");
 	opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
 	Assert.assertEquals(2, opcoesMarcadas.size());
-	opcoesMarcadas.containsAll(Arrays.asList("Natacao", "O que eh esporte?"));
+	Assert.assertTrue(opcoesMarcadas.containsAll(Arrays.asList("Natacao", "O que eh esporte?")));
 }
 
 @Test
@@ -116,5 +130,17 @@ Assert.assertEquals("Campo de Treinamento", dsl.obterTexto(By.tagName("h3")));
 Assert.assertEquals("Cuidado onde clica, muitas armadilhas...", 
 	dsl.obterTexto(By.className("facilAchar")));
  }
+
+@Test
+public void testJavascript() {
+	JavascriptExecutor js = (JavascriptExecutor) driver; 
+	//js.executeScript("alert('Testando js via selenium')");
+	js.executeScript("document.getElementById('elementosForm:nome').value = 'Escrito via jsp'");
+	js.executeScript("document.getElementById('elementosForm:sobrenome').type = 'radio'");
+	
+	WebElement element = driver.findElement(By.id("elementosForm:nome"));
+	js.executeScript("arguments[0].style.border = arguments[1]", element, "solid 4px red");
+ }
+
 }
 
