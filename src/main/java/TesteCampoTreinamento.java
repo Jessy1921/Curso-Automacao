@@ -144,6 +144,8 @@ public void testJavascript() {
 
 @Test
 public void deveClicarBotaoTabela(){
+	dsl.clicarBotaoTabela("Nome", "Maria", "Botao", "elementosForm:tableUsuarios");
+	
 	
 }
 

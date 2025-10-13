@@ -33,8 +33,12 @@ public class DSL {
 	
 	/********* Radio e Check ************/
 	
+	public void clicarRadio(By by) {
+		driver.findElement(by).click();
+	}
+	
 	public void clicarRadio(String id) {
-		driver.findElement(By.id(id)).click();
+		clicarRadio(By.id(id));
 	}
 	
 	public boolean isRadioMarcado(String id){
@@ -193,11 +197,11 @@ public class DSL {
 		WebElement celula = tabela.findElement(By.xpath(".//tr["+idLinha+"]/td["+idColunaBotao+"]"));
 		celula.findElement(By.xpath("./input")).click();
 		
-		//
+		
 	}
 
-	private void obterIndiceLinha(String valor, WebElement tabela, int idColuna) {
-		List<WebElement> linhas = tabela.findElements(By.xpath(".//tr/td["+idColuna+"]"));
+	private int obterIndiceLinha(String valor, WebElement tabela, int idColuna) {
+		List<WebElement> linhas = tabela.findElements(By.xpath("./tbody/tr/td["+idColuna+"]"));
 		int idLinha = -1;
 		for(int i = 0; i< linhas.size(); i++) {
 			if(linhas.get(i).getText().equals(valor)) {
@@ -205,6 +209,7 @@ public class DSL {
 				break;
 			}
 		}
+		return idLinha;
 	}
 
 	protected int obterIndiceColuna(String coluna, WebElement tabela) {
@@ -219,5 +224,14 @@ public class DSL {
 		return idColuna;
 	}
 	
+	public void clicarBotaoTabela(String colunaBusca, String valor, String colunaBotao, String idTabela) {
+	    WebElement tabela = driver.findElement(By.id(idTabela));
+	    int idColuna = obterIndiceColuna(colunaBusca, tabela);
+	    int idColunaBotao = obterIndiceColuna(colunaBotao, tabela);
+	    int idLinha = obterIndiceLinha(valor, tabela, idColuna);
+	    WebElement celula = tabela.findElement(By.xpath(".//tr[" + idLinha + "]/td[" + idColunaBotao + "]/input"));
+	    celula.click();
+	}
+
 	
 }
