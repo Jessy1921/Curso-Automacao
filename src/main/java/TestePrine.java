@@ -25,6 +25,7 @@ public class TestePrine {
 		
 		driver = new FirefoxDriver();
 		driver.manage().window().setSize(new Dimension(1200, 765));
+		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
 		dsl = new DSL(driver);
 	}
 	
@@ -44,7 +45,9 @@ public class TestePrine {
 	@Test
 	public void deveInteragirComSelectPrime() {
 		driver.get("https://www.primefaces.org/showcase/ui/input/oneMenu.xhtml");
-		dsl.selecionarCombo("j_idt86:console_input", "PS4");
+		dsl.selecionarComboPrime("j_idt86:console","Xbox One");
+		Assert.assertEquals("Xbox One", dsl.obterTexto("j_idt86:console_label"));
+		
 	}
 	
 	
