@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import br.ce.wcaquino.core.DSL;
+
 public class TesteFramesEJanelas {
 
     private WebDriver driver;

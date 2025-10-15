@@ -14,6 +14,8 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import br.ce.wcaquino.core.DSL;
+
 	@RunWith(Parameterized.class)
 	public class TesteRegrasCadastro {
 		
