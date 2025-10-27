@@ -1,6 +1,9 @@
 
-import static br.ce.wcaquino.core.DriverFactory.KillDriver;
+import static br.ce.wcaquino.core.DriverFactory.killDriver;
 
+import br.ce.wcaquino.core.BaseTest;
+import br.ce.wcaquino.core.DSL;
+import br.ce.wcaquino.pages.ContasPage;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,21 +11,22 @@ import org.junit.Test;
 
 import br.ce.wcaquino.core.DriverFactory;
 
-public class TesteCadastro {
-	
+public class TesteCadastro extends BaseTest {
 	private CampoTreinamentoPage page;
+
+    private DSL dsl;
 	
 	@Before
 	public void inicializa(){
 		System.setProperty("webdriver.gecko.driver", 
 		        "C:\\JAVA_HOME\\Automação_home\\geckodriver.exe");
 		DriverFactory.getDriver().get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-		  page = new CampoTreinamentoPage();
+		  page = new CampoTreinamentoPage(DriverFactory.getDriver());
 	}
 	
 	@After
 	public void finaliza(){
-		KillDriver(); 
+		killDriver();
 }
 
 	@Test

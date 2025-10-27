@@ -12,6 +12,11 @@ import org.openqa.selenium.support.ui.Select;
 public class DSL {
 	
 	private WebDriver driver;
+
+    public DSL(WebDriver driver) {
+        this.driver = driver;
+    }
+
 	public WebDriver getDriver() {
 	    return driver;
 	}
