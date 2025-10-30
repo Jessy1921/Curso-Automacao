@@ -2,6 +2,7 @@ package br.ce.wcaquino.core;
 
 import static br.ce.wcaquino.core.DriverFactory.getDriver;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,9 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BasePage {
 
@@ -189,40 +192,55 @@ public class BasePage {
     }
 
     /************** Tabela *********************/
+    /************** Tabela *********************/
 
-    public WebElement obterCelula(String colunaBusca, String valor, String colunaBotao, String idTabela){
-        //procurar coluna do registro
-        WebElement tabela = getDriver().findElement(By.xpath("//*[@id='"+idTabela+"']"));
+    public WebElement obterCelula(String colunaBusca, String valor, String colunaBotao, String idTabela) {
+        // Espera a tabela ficar visível
+        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(idTabela)));
+
+        WebElement tabela = getDriver().findElement(By.id(idTabela));
+
         int idColuna = obterIndiceColuna(colunaBusca, tabela);
+        if (idColuna == -1) {
+            throw new RuntimeException("⚠️ Coluna de busca '" + colunaBusca + "' não encontrada na tabela '" + idTabela + "'.");
+        }
 
-        //encontrar a linha do registro
         int idLinha = obterIndiceLinha(valor, tabela, idColuna);
+        if (idLinha == -1) {
+            // Debug: imprime todos os valores da coluna
+            List<WebElement> linhasDebug = tabela.findElements(By.xpath("./tbody/tr/td[" + idColuna + "]"));
+            System.out.println("Valores encontrados na coluna '" + colunaBusca + "':");
+            for(WebElement celula : linhasDebug) {
+                System.out.println("'" + celula.getText() + "'");
+            }
 
-        //procurar coluna do botao
+            throw new RuntimeException("⚠️ Valor '" + valor + "' não encontrado na coluna '" + colunaBusca + "' da tabela '" + idTabela + "'.");
+        }
+
         int idColunaBotao = obterIndiceColuna(colunaBotao, tabela);
+        if (idColunaBotao == -1) {
+            throw new RuntimeException("⚠️ Coluna de botão '" + colunaBotao + "' não encontrada na tabela '" + idTabela + "'.");
+        }
 
-        //clicar no botao da celula encontrada
-        WebElement celula = tabela.findElement(By.xpath(".//tr["+idLinha+"]/td["+idColunaBotao+"]"));
-        return celula;
-    }
-
-    public void clicarBotaoTabela(String colunaBusca, String valor, String colunaBotao, String idTabela){
-        WebElement celula = obterCelula(colunaBusca, valor, colunaBotao, idTabela);
-        celula.findElement(By.xpath(".//input")).click();
-
+        return tabela.findElement(By.xpath(".//tr[" + idLinha + "]/td[" + idColunaBotao + "]"));
     }
 
     protected int obterIndiceLinha(String valor, WebElement tabela, int idColuna) {
-        List<WebElement> linhas = tabela.findElements(By.xpath("./tbody/tr/td["+idColuna+"]"));
+        List<WebElement> linhas = tabela.findElements(By.xpath("./tbody/tr/td[" + idColuna + "]"));
         int idLinha = -1;
-        for(int i = 0; i < linhas.size(); i++) {
-            if(linhas.get(i).getText().equals(valor)) {
-                idLinha = i+1;
+
+        for (int i = 0; i < linhas.size(); i++) {
+            // Comparação robusta: ignora espaços e maiúsculas/minúsculas
+            if (linhas.get(i).getText().trim().equalsIgnoreCase(valor.trim())) {
+                idLinha = i + 1; // XPath começa em 1
                 break;
             }
         }
+
         return idLinha;
     }
+
 
     protected int obterIndiceColuna(String coluna, WebElement tabela) {
         List<WebElement> colunas = tabela.findElements(By.xpath(".//th"));

@@ -22,15 +22,6 @@ public class BaseTest {
     @Rule
     public TestName testName = new TestName();
 
-    @Before
-    public void inicializa(){
-        page.acessarTelaInicial();
-
-        page.setEmail("wagner@costa");
-        page.setSenha("123456");
-        page.entrar();
-    }
-
     @After
     public void finaliza() throws IOException{
         TakesScreenshot ss = (TakesScreenshot) getDriver();

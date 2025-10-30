@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.time.Duration;
 import br.ce.wcaquino.core.DSL;
 
 public class TesteAjax {
@@ -36,8 +36,8 @@ public class TesteAjax {
 	public void testAjax() {
 		dsl.escrever("j_id_47:name", "Teste");
 		dsl.clicarBotao("j_id_47:j_id_4d");
-		WebDriverWait wait = new WebDriverWait(driver, 30);
-	//	wait.until(ExpectedConditions.textToBe(By.id("j_idt85:display"), "Teste"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        //	wait.until(ExpectedConditions.textToBe(By.id("j_idt85:display"), "Teste"));
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("j_idt98")));
 		Assert.assertEquals("Teste", dsl.obterTexto("j_idt85:display"));
 	}

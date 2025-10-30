@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.time.Duration;
 import br.ce.wcaquino.core.DSL;
 
 public class TesteSicronismo {
@@ -51,8 +51,8 @@ public class TesteSicronismo {
 	@Test 
 	public void deveUtilizarEsperaExplicita() throws InterruptedException {
 		dsl.clicarBotao("buttonDelay");
-		WebDriverWait wait = new WebDriverWait(driver, 30);
-		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id("novoCampo")));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id("novoCampo")));
 		Thread.sleep(5000);
 		dsl.escrever("novoCampo", "Deu certo?");
 	}
